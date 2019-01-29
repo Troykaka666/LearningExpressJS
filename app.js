@@ -2,60 +2,44 @@ var catme = require("cat-me"),
     knock_joke = require("knock-knock-jokes"),
     faker = require("faker"),
     express = require("express"),
-    app = express();
+    app = express(),
+    bodyParser = require("body-parser");
 
-app.get("/",function(request,response){
-    response.send("Hi, welcome");
+app.use(bodyParser.urlencoded({extended: true}));
+
+//tell experss to search anything inside the public folder    
+app.use(express.static("public"));
+
+//set every render files defauls as ejs file
+app.set("view engine", "ejs");
+
+app.get("/", function(req,res){
+    res.render("home");
+});
+
+app.get("/posts", function(req,res){
+    var posts = [
+        {title: "Post 1", author: "Susy"},
+        {title: "Hello, hahaha", author: "John"},
+        {title: "See You, My friends", author: "Troy"}
+    ];
+    res.render("posts", {posts: posts});
+});
+
+var friends = ["Tony","Miranada","Justin","Lily","Troy"];
+
+app.post("/addfriend", function(req,res) {
+    var newFriend = req.body.newfriend;
+    friends.push(newFriend);
+    res.redirect("/fallinlovewith/:thing/");//trigger this route again 
+})
+app.get("/fallinlovewith/:thing/", function(req,res){
+    var thing = req.params.thing;
+    res.render("love", {thingVar: thing, friendsVar: friends });
 });
 
 
-//taking requests from the HTTP
-//handle the requests depend on the specific action
-//send out the handled info to the page
-app.get("/r/:action/:whatto/:times",function(request,response){
-    var action = request.params.action;
-    var whatto = request.params.whatto;
-    var num = request.params.times;
-    if(action == "speak"){
-        switch (whatto) {
-            case "pig":
-                response.send("The "+ whatto+" says Oink");
-                break;
-            case "cow":
-            response.send("The "+ whatto+" says Moo");
-            break;
-            case "dog":
-            response.send("The "+ whatto+" says Woof Woof");
-            break;
-            default:
-                break;
-        }
-    }else if(action == "repeat"){
-        var str = "";
-        for (let index = 0; index < num; index++) {
-            str = str + " " + whatto;
-        }
-        response.send(str);
-    }
-});
-
-//req is an object, params is a property of req which container all the reques 
-//info from the URL
-app.get("/r/:subreddit/comments/:id/:title/", function (req, res) {
-    var subreddit = req.params.subreddit;
-    var id = req.params.id;
-    var title = req.params.title;
+app.listen(8000, function(){
+    console.log("Server is listening!!");
     
-    res.send('hi,'+subreddit+" ,  "+id+"  , "+title);
 });
-
-app.get("*", function (req, res) {
-    res.send('Just need to display something~')
-});
-app.listen(3000,function(){
-    console.log("Server Has Started!!");  
-});
-// app.listen(process.env.PORT, process.env.IP, function(){
-//     console.log("Server Has Started!!");
-    
-// });

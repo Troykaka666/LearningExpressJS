@@ -1,0 +1,26 @@
+<% include partials/header %>
+
+        <h1>You Fell in love with: <%= thingVar %> </h1>
+        <% if(thingVar.toLowerCase() == "troy"){ %>
+            <p>Welcome, Troy</p>
+        <% } else { %>
+            <p>Who are U??</p>
+        <% } %>
+        
+        <p>This is Love.ejs file</p>
+        <br>
+        <% friendsVar.forEach(function(friend){ %>
+            <li><%= friend %></li>
+        <% }) %>
+        
+        <!-- <%= %>: everything will be added it into html -->
+        <!-- <% %> : just run the javascript logic-->
+        
+    <form action="/addfriend" method="POST">
+        <input type="text" name="newfriend" placeholder="name">
+        <button>I made a new friend</button>
+    </form>
+
+
+<% include partials/footer %>
+
